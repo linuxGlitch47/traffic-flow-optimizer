@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traffic Flow Optimizer · HCL JIGSAW 7.0</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9A%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">🚦</span><div><h1>Traffic Flow Optimizer</h1><p>HCL JIGSAW 7.0 · AI Revolution &amp; Digital Futures</p></div></div>
+  <div class="site"><span class="pin">◉</span><b data-bind="junction"></b><span class="sep">·</span><span data-bind="city"></span></div>
+</header>
+
+<section class="loc" aria-label="Junction settings">
+  <label>Preset<select id="preset"></select></label>
+  <label>City<input id="city" value="Bengaluru"></label>
+  <label>4-way intersection<input id="junction" value="Silk Board Junction"></label>
+  <label>North–South road<input id="nsRoad" value="Hosur Road"></label>
+  <label>East–West road<input id="ewRoad" value="Outer Ring Road"></label>
+</section>
+
+<nav class="tabs" role="tablist">
+  <button data-view="blueprint" class="on">1 · Intersection Blueprint</button>
+  <button data-view="live">2 · Live Simulation</button>
+  <button data-view="results">3 · Results &amp; A/B Benchmark</button>
+</nav>
+
+<main>
+<section id="view-blueprint" class="view on">
+  <h2>Intersection Blueprint — <span data-bind="junction"></span>, <span data-bind="city"></span></h2>
+  <div class="split">
+    <div class="canvas-wrap"><canvas id="bp"></canvas></div>
+    <aside class="panel">
+      <h3>Legend &amp; specification</h3>
+      <ol class="legend">
+        <li><i class="b">1</i><span class="sw loop"></span><div><b>Stop-bar inductive loop</b><br>Detects a vehicle waiting at the line.</div></li>
+        <li><i class="b">2</i><span class="sw loop"></span><div><b>Upstream inductive loop</b><br>Counts arrivals → arrival rate (veh/min).</div></li>
+        <li><i class="b">3</i><span class="sw cam"></span><div><b>Camera queue zone</b><br>Estimates queue length and waiting time.</div></li>
+        <li><i class="b">4</i><span class="sw sig"></span><div><b>Signal head</b><br>Red / amber / green, one approach at a time.</div></li>
+        <li><i class="b">5</i><span class="sw zeb"></span><div><b>Stop line &amp; pedestrian crosswalk</b></div></li>
+      </ol>
+      <h3>Geometry</h3>
+      <table class="kv">
+        <tr><td>Approaches</td><td>North · East · South · West</td></tr>
+        <tr><td>Lanes</td><td>1 inbound + 1 outbound per arm</td></tr>
+        <tr><td>North–South road</td><td data-bind="ns"></td></tr>
+        <tr><td>East–West road</td><td data-bind="ew"></td></tr>
+        <tr><td>Phasing</td><td>4 single-approach phases</td></tr>
+        <tr><td>Amber / all-red</td><td>3 s / 1.5 s</td></tr>
+      </table>
+    </aside>
+  </div>
+</section>
+
+<section id="view-live" class="view">
+  <h2>Live Simulation — <span data-bind="junction"></span>, <span data-bind="city"></span></h2>
+  <div class="bar-controls">
+    <label>Scenario<select id="scen"></select></label>
+    <div class="seg" id="modeSeg"><button data-mode="fixed">Fixed-Timer</button><button data-mode="ai" class="on">AI Adaptive</button></div>
+    <div class="seg" id="speedSeg"><button data-sp="1" class="on">1×</button><button data-sp="2">2×</button><button data-sp="4">4×</button></div>
+    <button id="pause" class="btn ghost">Pause</button>
+    <button id="reset" class="btn ghost">Reset</button>
+  </div>
+  <div class="sliders" id="sliders"></div>
+  <div class="split">
+    <div class="canvas-wrap"><canvas id="live"></canvas></div>
+    <aside class="panel">
+      <div class="phase" id="phase"></div>
+      <h3>Per-lane telemetry</h3>
+      <table class="tel" id="tel"></table>
+      <div class="kpis" id="kpis"></div>
+      <h3>Emergency override</h3>
+      <div class="amb"><select id="ambSel"></select><button id="ambBtn" class="btn danger">🚑 Trigger ambulance</button></div>
+      <p class="note" id="ambMsg">AI mode clears the ambulance’s lane immediately. Fixed-Timer has no override.</p>
+    </aside>
+  </div>
+</section>
+
+<section id="view-results" class="view">
+  <h2>Results &amp; A/B Benchmark — <span data-bind="junction"></span>, <span data-bind="city"></span></h2>
+  <div class="bar-controls">
+    <button id="run" class="btn">▶ Run 60-Second Head-to-Head Benchmark</button>
+    <span class="note" id="benchInfo"></span>
+  </div>
+  <div id="results"></div>
+</section>
+</main>
+<footer>Identical vehicle-arrival seeds are replayed under both controllers · Simulation runs entirely in your browser</footer>
+<script src="app.js"></script>
+</body>
+</html>
